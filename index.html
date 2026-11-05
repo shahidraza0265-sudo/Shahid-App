@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B2A3C">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>Shahid App</title>
+<style>
+:root{--ink:#0B2A3C;--teal:#0E7C86;--foam:#EEF6F6;--paper:#FBFDFD;--line:#D3E3E5;--mute:#5A727D;--red:#D93F3F;--amber:#D98200;--green:#2A9158;--blue:#3A6EA5;--r:14px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--foam);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body.lock{overflow:hidden}
+a{color:inherit;text-decoration:none}
+header.top{position:sticky;top:0;z-index:20;background:var(--ink);color:#fff;display:flex;align-items:center;gap:10px;padding:max(10px,env(safe-area-inset-top)) 14px 10px}
+header.top h1{font-size:19px;margin:0;flex:1;font-weight:700;letter-spacing:.2px}
+header.top button{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:10px;width:44px;height:44px;font-size:22px}
+main{padding:14px 14px 150px;max-width:720px;margin:0 auto}
+nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom)}
+nav.bar a,nav.bar button{background:none;border:0;padding:8px 2px 7px;font:600 12px system-ui;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px;position:relative}
+nav.bar .ic{font-size:21px;line-height:1}
+nav.bar .on{color:var(--teal)}
+nav.bar .badge{position:absolute;top:4px;left:calc(50% + 6px);background:var(--red);color:#fff;border-radius:10px;font-size:11px;padding:0 6px;min-width:18px;text-align:center}
+.fab{position:fixed;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:21;width:60px;height:60px;border-radius:50%;background:var(--teal);color:#fff;border:0;font-size:32px;box-shadow:0 6px 18px rgba(11,42,60,.35)}
+h2{font-size:18px;margin:18px 0 8px}
+h2 small{color:var(--mute);font-weight:500;font-size:14px}
+.brief{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}
+.big{border-radius:var(--r);padding:16px;color:#fff;display:block;min-height:112px}
+.big b{display:block;font-size:46px;line-height:1;font-weight:800}
+.big span{display:block;margin-top:8px;font-weight:600}
+.big.today{background:var(--teal)}
+.big.over{background:var(--red)}
+.big.over.zero{background:var(--green)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 8px;text-align:center;font-size:12.5px;color:var(--mute);min-height:74px}
+.tile b{display:block;font-size:24px;color:var(--ink)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:12px;margin-bottom:10px}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card .name{font-weight:700;font-size:17px}
+.sub{color:var(--mute);font-size:14px;margin-top:2px}
+.remark{margin:8px 0;padding:8px 10px;background:var(--foam);border-radius:10px;font-size:14.5px}
+.when{font-weight:700;font-size:14px;margin:6px 0}
+.when.over{color:var(--red)}.when.today{color:var(--teal)}.when.none{color:var(--mute);font-weight:500}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.tag,.tagchip{--tc:#5F6B73;border:1.5px solid var(--tc);color:var(--tc);background:color-mix(in srgb,var(--tc) 10%,#fff);border-radius:20px;padding:2px 9px;font-size:13px;font-weight:600;white-space:nowrap}
+.tagchip{font-family:inherit;padding:8px 12px;font-size:14px;background:#fff}
+.tagchip.on{background:var(--tc);color:#fff}
+.pri{font-size:12.5px;font-weight:700;border-radius:8px;padding:2px 9px;color:#fff}
+.pri.hot{background:var(--red)}.pri.warm{background:var(--amber)}.pri.cold{background:var(--blue)}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
+.acts.two{grid-template-columns:repeat(2,1fr)}
+.btn{border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;min-height:46px;font:600 15px system-ui;padding:8px 6px;display:flex;align-items:center;justify-content:center;gap:5px;text-align:center}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.good{background:var(--green);border-color:var(--green);color:#fff}
+.btn.warn{color:var(--red);border-color:#f0c4c4}
+.btn.big{width:100%;min-height:54px;font-size:17px;margin-top:14px}
+.btn.sm{min-height:40px;font-size:14px;padding:6px 12px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 5px}
+input,select,textarea{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:16px system-ui;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+.seg{display:flex;gap:6px}.seg.wrap{flex-wrap:wrap}
+.seg button,.qchip{flex:1;min-height:46px;border:1.5px solid var(--line);background:#fff;border-radius:12px;font:600 14.5px system-ui;color:var(--ink);padding:6px 10px}
+.seg.wrap button{flex:0 0 auto}
+.seg button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.seg button.on.hot{background:var(--red);border-color:var(--red)}.seg button.on.warm{background:var(--amber);border-color:var(--amber)}.seg button.on.cold{background:var(--blue);border-color:var(--blue)}
+.qrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.qchip{flex:0 0 auto;min-height:36px;font-size:13px;padding:4px 11px;background:var(--foam)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+.chips .tagchip,.chips .qchip{flex:0 0 auto}
+.sheet-bg{position:fixed;inset:0;background:rgba(11,42,60,.55);z-index:50;display:flex;align-items:flex-end}
+.sheet{background:var(--paper);width:100%;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+.sheet h2{margin-top:0}
+.hist{border-left:3px solid var(--line);margin-left:6px;padding-left:14px}
+.he{position:relative;margin-bottom:14px}
+.he:before{content:"";position:absolute;left:-21px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--teal);border:2px solid var(--foam)}
+.he.sale:before{background:var(--green)}.he.reschedule:before{background:var(--amber)}.he.created:before{background:var(--mute)}
+.he .h{font-weight:700;font-size:14px}.he .d{color:var(--mute);font-size:12.5px}.he p{margin:3px 0;font-size:14.5px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;font-size:14.5px}
+.kv dt{color:var(--mute)}.kv dd{margin:0;font-weight:600;word-break:break-word}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .dow{font-size:12px;color:var(--mute);font-weight:600}
+.cal button{aspect-ratio:1/1;border:1px solid var(--line);background:#fff;border-radius:10px;font:600 15px system-ui;color:var(--ink);position:relative;padding:0}
+.cal button.td{border-color:var(--teal);border-width:2px}
+.cal button.sel{background:var(--ink);color:#fff}
+.cal button i{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);font-style:normal;font-size:10px;background:var(--teal);color:#fff;border-radius:8px;padding:0 5px}
+.cal button i.o{background:var(--red)}
+.cal button.blank{visibility:hidden}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.stat b{display:block;font-size:30px}.stat span{color:var(--mute);font-size:14px}
+.empty{text-align:center;color:var(--mute);padding:26px 10px;background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
+.note{font-size:13px;color:var(--mute);background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
+.warnbox{background:#FFF4E0;border:1px solid #F0D49A;color:#7a4b00;border-radius:12px;padding:10px 12px;font-size:14px;margin-top:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;z-index:90;font-weight:600;max-width:90vw}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}
+.tog{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;min-height:50px;margin-top:8px}
+.tog input{width:24px;min-height:24px;flex:none}
+.hide{display:none!important}
+.menu a{display:flex;gap:12px;align-items:center;padding:14px 6px;border-bottom:1px solid var(--line);font-weight:600;font-size:17px}
+@media (prefers-reduced-motion:no-preference){.toast{animation:up .2s}@keyframes up{from{opacity:0;transform:translate(-50%,10px)}}}
+
+#gate{position:fixed;inset:0;z-index:100;background:var(--foam);overflow:auto;padding:max(18px,env(safe-area-inset-top)) 16px 30px}
+#gate .in{max-width:440px;margin:0 auto}
+.plan{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.plan b{font-size:20px}.plan .btn{flex:0 0 90px}
+.toast{z-index:130}
+</style>
+</head>
+<body>
+<header class="top"><h1 id="title">Shahid App</h1><button id="menuBtn" aria-label="Menu">☰</button></header>
+<main id="app"></main>
+<button class="fab" id="fab" aria-label="Add customer">＋</button>
+<nav class="bar" id="bar"></nav>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+'use strict';
+/* ---------- helpers ---------- */
+const $=(s,e=document)=>e.querySelector(s);
+const $$=(s,e=document)=>[...e.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+/* ---------- constants ---------- */
+const BASE_TAGS=[['🔥 Hot Lead','#C62828'],['🟠 Interested','#C2570C'],['💰 Price Issue','#9A6B00'],['👨‍👩‍👦 Family Discussion','#7B3FA0'],['📞 Call Back','#1E5FA8'],['📅 Month-End Purchase','#0E7C86'],['🛍️ Ready to Buy','#1F7A45'],['💧 Product Demonstration','#0B7285'],['⏳ Purchase Postponed','#6D5A3C'],['📵 No Response','#5F6B73'],['🏆 Sale Completed','#8A6D00'],['❌ Lost Customer','#8C1D1D']];
+const CUSTOM_COLORS=['#AD1457','#00695C','#4527A0','#2E7D32','#EF6C00','#37474F'];
+const T_HOT='🔥 Hot Lead',T_SALE='🏆 Sale Completed',T_LOST='❌ Lost Customer';
+const STATUSES=['New Inquiry','Contacted','Negotiating','Sale Done','Lost'];
+const PRIS=['Hot','Warm','Cold'];
+const ZONES=['Asia/Kuwait','Asia/Riyadh','Asia/Dubai','Asia/Qatar','Asia/Bahrain','Asia/Muscat','Asia/Baghdad','Asia/Karachi','Asia/Kolkata','Asia/Dhaka','Africa/Cairo','Asia/Manila','Europe/London','UTC'];
+const DEFAULTS={tz:'Asia/Kuwait',cc:'965',remindBefore:10,notify:false,overdueAlert:true,customTags:[],counter:0,lastBackup:0};
+
+const S={customers:[],map:new Map(),settings:{...DEFAULTS},fired:{},ui:{filterPri:'',filterTags:[],q:'',special:'',calMonth:'',calSel:''}};
+
+/* ---------- IndexedDB ---------- */
+let db;
+function openDB(n){return new Promise((res,rej)=>{const r=indexedDB.open(n||'shahid-app',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('customers',{keyPath:'id'});d.createObjectStore('meta',{keyPath:'k'});};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+const store=(n,m='readonly')=>db.transaction(n,m).objectStore(n);
+const rq=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
+async function metaGet(k){const r=await rq(store('meta').get(k));return r?r.v:undefined;}
+const metaSet=(k,v)=>rq(store('meta','readwrite').put({k,v}));
+async function saveCustomer(c){c.updatedAt=Date.now();await rq(store('customers','readwrite').put(c));cloudPut(c);const i=S.customers.findIndex(x=>x.id===c.id);if(i>=0)S.customers[i]=c;else S.customers.push(c);S.map.set(c.id,c);}
+const saveSettings=()=>{cloudSettings();return metaSet('settings',S.settings);};
+
+/* ---------- time (all calculations in the chosen time zone) ---------- */
+const TZ=()=>S.settings.tz;
+function parts(ts,tz=TZ()){const f=new Intl.DateTimeFormat('en-CA',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});const o={};f.formatToParts(new Date(ts)).forEach(p=>o[p.type]=p.value);return o;}
+function tzOffset(ts,tz){const p=parts(ts,tz);return Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute)-Math.floor(ts/60000)*60000;}
+function toTs(date,time,tz=TZ()){const[y,m,d]=date.split('-').map(Number);const[h,mi]=(time||'09:00').split(':').map(Number);const g=Date.UTC(y,m-1,d,h,mi);let t=g-tzOffset(g,tz);t=g-tzOffset(t,tz);return t;}
+const todayStr=(now=Date.now())=>{const p=parts(now);return`${p.year}-${p.month}-${p.day}`;};
+const nowLocal=()=>{const p=parts(Date.now());return`${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;};
+const addDays=(ds,n)=>{const[y,m,d]=ds.split('-').map(Number);return new Date(Date.UTC(y,m-1,d+n)).toISOString().slice(0,10);};
+const monthEnd=ds=>{const[y,m]=ds.split('-').map(Number);return new Date(Date.UTC(y,m,0)).toISOString().slice(0,10);};
+const fmtDate=ds=>ds?new Date(ds+'T00:00:00Z').toLocaleDateString('en-GB',{timeZone:'UTC',weekday:'short',day:'numeric',month:'short',year:'numeric'}):'';
+const fmtTime=t=>{if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h<12?'AM':'PM'}`;};
+const fmtLocalStr=s=>{if(!s)return'';const[d,t]=s.split('T');return fmtDate(d)+(t?', '+fmtTime(t):'');};
+const ago=ms=>{const m=Math.max(1,Math.floor(ms/60000));if(m<60)return m+' min';const h=Math.floor(m/60);if(h<24)return h+' h';return Math.floor(h/24)+' d';};
+
+/* ---------- tags ---------- */
+const allTags=()=>[...BASE_TAGS.map(t=>t[0]),...S.settings.customTags.map(t=>t.name)];
+function tagColor(n){const b=BASE_TAGS.find(t=>t[0]===n);if(b)return b[1];const c=S.settings.customTags.find(t=>t.name===n);return c?c.color:'#5F6B73';}
+const tagHTML=n=>`<span class="tag" style="--tc:${tagColor(n)}">${esc(n)}</span>`;
+const tagsHTML=a=>a&&a.length?`<div class="tags">${a.map(tagHTML).join('')}</div>`:'';
+const tagPicker=(sel,id)=>`<div class="chips" id="${id}" style="flex-wrap:wrap;overflow:visible">${allTags().map(n=>`<button type="button" class="tagchip ${sel.includes(n)?'on':''}" style="--tc:${tagColor(n)}" data-tag="${esc(n)}">${esc(n)}</button>`).join('')}<button type="button" class="qchip" data-act="newtag" data-target="${id}">＋ New tag</button></div>`;
+const pickedTags=id=>$$('.tagchip.on',$('#'+id)).map(b=>b.dataset.tag);
+function addCustomTag(name){name=name.trim();if(!name)return null;if(allTags().some(t=>t.toLowerCase()===name.toLowerCase()))return allTags().find(t=>t.toLowerCase()===name.toLowerCase());const color=CUSTOM_COLORS[S.settings.customTags.length%CUSTOM_COLORS.length];S.settings.customTags.push({name,color});saveSettings();return name;}
+
+/* ---------- classification ---------- */
+const isOpen=c=>c.status!=='Sale Done'&&c.status!=='Lost';
+const hasFU=c=>isOpen(c)&&!!c.fuDate;
+const dueTs=c=>toTs(c.fuDate,c.fuTime);
+function cat(c){if(!hasFU(c))return null;if(dueTs(c)<Date.now())return'overdue';return c.fuDate===todayStr()?'today':'upcoming';}
+const priRank=p=>({Hot:0,Warm:1,Cold:2}[p]??3);
+function lists(){const L={today:[],overdue:[],upcoming:[],hot:[],fresh:[],nofu:[],sales:[],lost:[]};
+for(const c of S.customers){const k=cat(c);if(k)L[k].push(c);
+if(isOpen(c)&&c.priority==='Hot')L.hot.push(c);
+if(c.status==='New Inquiry')L.fresh.push(c);
+if(isOpen(c)&&!c.fuDate)L.nofu.push(c);
+if(c.status==='Sale Done')L.sales.push(c);
+if(c.status==='Lost')L.lost.push(c);}
+L.today.sort((a,b)=>dueTs(a)-dueTs(b)||priRank(a.priority)-priRank(b.priority));
+L.overdue.sort((a,b)=>dueTs(a)-dueTs(b)||priRank(a.priority)-priRank(b.priority));
+L.upcoming.sort((a,b)=>dueTs(a)-dueTs(b));
+return L;}
+
+/* ---------- phone helpers ---------- */
+const digits=s=>String(s||'').replace(/\D/g,'');
+const norm=s=>digits(s).slice(-8);
+function waLink(c){let d=digits(c.whatsapp||c.mobile);if(d.length<7)return null;if(d.length<=8)d=S.settings.cc+d;return'https://wa.me/'+d;}
+const telLink=c=>'tel:'+String(c.mobile).replace(/[^\d+]/g,'');
+
+/* ---------- UI atoms ---------- */
+function toast(msg){$$('.toast').forEach(x=>x.remove());const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+function openSheet(html){closeSheet();const s=document.createElement('div');s.className='sheet-bg';s.innerHTML=`<div class="sheet" role="dialog">${html}</div>`;s.addEventListener('click',e=>{if(e.target===s)closeSheet();});document.body.appendChild(s);document.body.classList.add('lock');}
+function closeSheet(){$$('.sheet-bg').forEach(x=>x.remove());document.body.classList.remove('lock');}
+const priPill=p=>`<span class="pri ${String(p).toLowerCase()}">${esc(p)}</span>`;
+
+function whenHTML(c){if(!isOpen(c))return`<div class="when none">${esc(c.status)}</div>`;if(!c.fuDate)return'<div class="when none">No follow-up scheduled</div>';const k=cat(c);const t=`${fmtDate(c.fuDate)}, ${fmtTime(c.fuTime)}`;
+if(k==='overdue')return`<div class="when over">⚠ Missed: ${t} · ${ago(Date.now()-dueTs(c))} ago</div>`;
+if(k==='today')return`<div class="when today">Today at ${fmtTime(c.fuTime)}</div>`;
+return`<div class="when">Next: ${t}</div>`;}
+
+function cardHTML(c,mode='full'){
+const wa=waLink(c);
+let acts='';
+if(mode==='full')acts=`<div class="acts">
+<button class="btn primary" data-act="call" data-id="${c.id}">📞 Call</button>
+<button class="btn ${wa?'good':''}" data-act="wa" data-id="${c.id}">💬 WhatsApp</button>
+<button class="btn" data-act="remark" data-id="${c.id}">📝 Remark</button>
+<button class="btn" data-act="resched" data-id="${c.id}">🗓 Reschedule</button>
+<button class="btn" data-act="complete" data-id="${c.id}">✔ Completed</button>
+<button class="btn good" data-act="sale" data-id="${c.id}">🏆 Sale Done</button></div>`;
+else if(mode==='lite')acts=`<div class="acts">
+<button class="btn primary" data-act="call" data-id="${c.id}">📞 Call</button>
+<button class="btn" data-act="wa" data-id="${c.id}">💬 WhatsApp</button>
+<button class="btn" data-act="complete" data-id="${c.id}">✔ Completed</button></div>`;
+else acts=`<div class="acts two"><button class="btn primary sm" data-act="call" data-id="${c.id}">📞 Call</button><button class="btn sm" data-act="wa" data-id="${c.id}">💬 WhatsApp</button></div>`;
+return`<div class="card"><div class="top"><div><a class="name" href="#/c/${c.id}">${esc(c.name)}</a><div class="sub">${esc(c.mobile)}${c.product?' · '+esc(c.product):''}${c.location?' · '+esc(c.location):''}</div></div>${priPill(c.priority)}</div>
+${tagsHTML(c.tags)}${whenHTML(c)}${c.remark?`<div class="remark">${esc(c.remark)}</div>`:''}${acts}</div>`;}
+const listHTML=(a,mode,empty)=>a.length?a.map(c=>cardHTML(c,mode)).join(''):`<div class="empty">${empty}</div>`;
+
+/* ---------- views ---------- */
+const VIEWS={};
+VIEWS.home=()=>{const L=lists();const s=S.settings;
+const backupNag=S.customers.length&&(Date.now()-s.lastBackup>14*864e5)?`<div class="note">No backup in the last 14 days. <a href="#/settings" style="color:var(--teal);font-weight:700">Back up now</a></div>`:'';
+return`<div class="brief"><a class="big today" href="#/today"><b>${L.today.length}</b><span>Call today</span></a><a class="big over ${L.overdue.length?'':'zero'}" href="#/overdue"><b>${L.overdue.length}</b><span>${L.overdue.length?'Missed – call now':'Missed. All clear'}</span></a></div>
+${L.overdue.length?`<h2>Missed <small>${L.overdue.length}</small></h2>${L.overdue.slice(0,3).map(c=>cardHTML(c,'lite')).join('')}${L.overdue.length>3?'<a class="btn" href="#/overdue">See all missed</a>':''}`:''}
+<h2>Today's Follow-Ups <small>${L.today.length}</small></h2>${listHTML(L.today,'lite','Nothing else scheduled for today.')}
+<h2>Overview</h2><div class="tiles">
+<a class="tile" href="#/customers" data-special="upcoming"><b>${L.upcoming.length}</b>Upcoming</a>
+<a class="tile" href="#/customers" data-special="hot"><b>${L.hot.length}</b>Hot customers</a>
+<a class="tile" href="#/customers" data-special="fresh"><b>${L.fresh.length}</b>New inquiries</a>
+<a class="tile" href="#/customers" data-special="nofu"><b>${L.nofu.length}</b>No follow-up</a>
+<a class="tile" href="#/customers" data-special="sales"><b>${L.sales.length}</b>Completed sales</a>
+<a class="tile" href="#/reports"><b>${S.customers.length}</b>All customers</a></div>
+${backupNag}${S.customers.length?'':'<div class="empty" style="margin-top:14px">No customers yet. Tap ＋ to add your first customer.</div>'}`;};
+
+VIEWS.today=()=>{const L=lists();return`${L.overdue.length?`<a class="warnbox" style="display:block;margin:0 0 10px" href="#/overdue">⚠ ${L.overdue.length} missed follow-up${L.overdue.length>1?'s':''}. Tap to open</a>`:''}${listHTML(L.today,'full','No more follow-ups scheduled for today.')}`;};
+VIEWS.overdue=()=>{const L=lists();return`<div class="note">Oldest missed first. Hot customers first when times are equal.</div>${listHTML(L.overdue,'full','No missed follow-ups. 🎉')}`;};
+
+const SPECIALS={upcoming:'Upcoming follow-ups',hot:'Hot customers',fresh:'New inquiries',nofu:'Customers without a follow-up',sales:'Completed sales'};
+VIEWS.customers=()=>{const u=S.ui,L=lists();
+let arr=[...S.customers];
+if(u.special){arr={upcoming:L.upcoming,hot:L.hot,fresh:L.fresh,nofu:L.nofu,sales:L.sales}[u.special]||arr;}
+if(u.filterPri)arr=arr.filter(c=>c.priority===u.filterPri);
+if(u.filterTags.length)arr=arr.filter(c=>u.filterTags.every(t=>c.tags.includes(t)));
+const q=u.q.trim().toLowerCase();
+if(q){const qd=digits(q);arr=arr.filter(c=>{const hay=[c.name,c.mobile,c.whatsapp,c.product,c.location,c.remark,c.id,...c.tags,...c.history.flatMap(h=>[h.remark,h.objection,h.response])].join(' ').toLowerCase();return hay.includes(q)||(qd.length>=3&&(digits(c.mobile).includes(qd)||digits(c.whatsapp).includes(qd)));});}
+if(!u.special)arr.sort((a,b)=>b.updatedAt-a.updatedAt);
+return`<input id="q" type="search" placeholder="Search name, number, product, tag, location, remark" value="${esc(u.q)}">
+<div class="chips" style="margin-top:8px">${['','Hot','Warm','Cold'].map(p=>`<button class="qchip ${u.filterPri===p?'on':''}" style="${u.filterPri===p?'background:var(--ink);color:#fff':''}" data-act="fpri" data-v="${p}">${p||'All'}</button>`).join('')}</div>
+<div class="chips">${allTags().map(n=>`<button class="tagchip ${u.filterTags.includes(n)?'on':''}" style="--tc:${tagColor(n)}" data-act="ftag" data-v="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+${u.special?`<div class="row" style="margin-bottom:8px"><div class="note" style="margin:0">Showing: ${SPECIALS[u.special]}</div><button class="btn sm" style="flex:0 0 auto" data-act="clearspecial">✕ Clear</button></div>`:''}
+<div class="sub" style="margin:4px 2px 8px">${arr.length} customer${arr.length===1?'':'s'}</div>
+<div id="results">${listHTML(arr,'list',S.customers.length?'No customers match.':'No customers yet. Tap ＋ to add one.')}</div>`;};
+
+function fuFields(p,date,time){return`<div class="fu"><div class="two-col"><div><label style="margin-top:6px">Date</label><input type="date" id="${p}-d" value="${date||''}"></div><div><label style="margin-top:6px">Time</label><input type="time" id="${p}-t" value="${time||''}"></div></div>
+<div class="qrow">${[['today','Today'],['tomorrow','Tomorrow'],['3','In 3 days'],['week','Next week'],['month','Month end']].map(a=>`<button type="button" class="qchip" data-qd="${a[0]}">${a[1]}</button>`).join('')}</div>
+<div class="qrow">${['10:00','12:00','16:00','18:00','20:00'].map(t=>`<button type="button" class="qchip" data-qt="${t}">${fmtTime(t)}</button>`).join('')}</div></div>`;}
+const readFU=p=>{const d=$('#'+p+'-d').value,t=$('#'+p+'-t').value;return{d,t:d?(t||'09:00'):''};};
+
+function formView(c){const n=!c;c=c||{name:'',mobile:'',whatsapp:'',location:'',product:'',inquiryDate:todayStr(),price:'',priority:'Warm',tags:[],remark:'',status:'New Inquiry',fuDate:'',fuTime:'',fuNote:''};
+const prods=[...new Set(S.customers.map(x=>x.product).filter(Boolean))];
+return`<form id="cform" onsubmit="return false" data-id="${n?'':c.id}">
+<label>Customer name *</label><input id="f-name" value="${esc(c.name)}" autocomplete="off">
+<label>Mobile number *</label><input id="f-mobile" type="tel" inputmode="tel" value="${esc(c.mobile)}"><div id="dupnote"></div>
+<label>WhatsApp number</label><div class="row"><input id="f-wa" type="tel" inputmode="tel" value="${esc(c.whatsapp)}" placeholder="Leave empty if same as mobile"><button type="button" class="btn sm" style="flex:0 0 auto" data-act="samewa">Same as mobile</button></div>
+<label>Location</label><input id="f-loc" value="${esc(c.location)}">
+<label>Product interested in</label><input id="f-prod" list="prods" value="${esc(c.product)}" placeholder="e.g. Water Purifier"><datalist id="prods">${prods.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
+<div class="two-col"><div><label>Inquiry date</label><input type="date" id="f-inq" value="${c.inquiryDate||''}"></div><div><label>Quoted price</label><input id="f-price" type="number" inputmode="decimal" step="any" value="${esc(c.price)}" placeholder="KWD"></div></div>
+<label>Priority</label><div class="seg" id="f-pri">${PRIS.map(p=>`<button type="button" data-v="${p}" class="${p.toLowerCase()} ${c.priority===p?'on':''}">${p}</button>`).join('')}</div>
+<label>Tags</label>${tagPicker(c.tags,'f-tags')}
+<label>Latest remark</label><textarea id="f-remark" rows="3">${esc(c.remark)}</textarea>
+<label>Sales status</label><select id="f-status">${STATUSES.map(s=>`<option ${c.status===s?'selected':''}>${s}</option>`).join('')}</select>
+<label>Next follow-up</label>${fuFields('f',c.fuDate,c.fuTime)}
+<label>Follow-up reminder note</label><input id="f-note" value="${esc(c.fuNote)}" placeholder="What to ask or offer">
+<button class="btn primary big" data-act="savecust">${n?'Save customer':'Update customer'}</button></form>`;}
+VIEWS.add=()=>formView(null);
+VIEWS.edit=id=>{const c=S.map.get(id);return c?formView(c):'<div class="empty">Customer not found.</div>';};
+
+VIEWS.c=id=>{const c=S.map.get(id);if(!c)return'<div class="empty">Customer not found.</div>';const wa=waLink(c);
+const hist=[...c.history].sort((a,b)=>a.ts-b.ts);
+const he=h=>{const when=h.callAt?fmtLocalStr(h.callAt):new Date(h.ts).toLocaleString('en-GB',{timeZone:TZ(),day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true});
+const title={call:'Call / remark',completed:'Follow-up completed',sale:'Sale completed',reschedule:'Rescheduled',created:'Customer added',edit:'Details updated'}[h.type]||'Note';
+return`<div class="he ${h.type}"><div class="h">${title}</div><div class="d">${when}</div>
+${h.response?`<p><b>Response:</b> ${esc(h.response)}</p>`:''}${h.remark?`<p>${esc(h.remark)}</p>`:''}${h.objection?`<p><b>Objection:</b> ${esc(h.objection)}</p>`:''}${tagsHTML(h.tags)}
+${h.nextDate?`<p class="d">Next follow-up set: ${fmtDate(h.nextDate)}, ${fmtTime(h.nextTime)}</p>`:''}</div>`;};
+return`<div class="card"><div class="top"><div><div class="name" style="font-size:20px">${esc(c.name)}</div><div class="sub">${esc(c.id)} · ${esc(c.status)}</div></div>${priPill(c.priority)}</div>${tagsHTML(c.tags)}${whenHTML(c)}${c.fuNote&&hasFU(c)?`<div class="sub">Note: ${esc(c.fuNote)}</div>`:''}
+<div class="acts"><button class="btn primary" data-act="call" data-id="${c.id}">📞 Call</button><button class="btn ${wa?'good':''}" data-act="wa" data-id="${c.id}">💬 WhatsApp</button><button class="btn" data-act="remark" data-id="${c.id}">📝 Remark</button><button class="btn" data-act="resched" data-id="${c.id}">🗓 ${c.fuDate?'Reschedule':'Schedule'}</button><button class="btn" data-act="complete" data-id="${c.id}">✔ Completed</button><button class="btn good" data-act="sale" data-id="${c.id}">🏆 Sale Done</button></div></div>
+<dl class="kv card"><dt>Mobile</dt><dd>${esc(c.mobile)}</dd><dt>WhatsApp</dt><dd>${esc(c.whatsapp||'Same as mobile')}</dd><dt>Location</dt><dd>${esc(c.location||'–')}</dd><dt>Product</dt><dd>${esc(c.product||'–')}</dd><dt>Inquiry date</dt><dd>${fmtDate(c.inquiryDate)||'–'}</dd><dt>Quoted price</dt><dd>${c.price!==''?esc(c.price)+' KWD':'–'}</dd></dl>
+<h2>History <small>oldest first</small></h2><div class="hist">${hist.map(he).join('')}</div>
+<div class="acts two" style="margin-top:16px"><a class="btn" href="#/edit/${c.id}">✏ Edit details</a><button class="btn warn" data-act="delete" data-id="${c.id}">Delete customer</button></div>`;};
+
+VIEWS.calendar=()=>{const u=S.ui;if(!u.calMonth)u.calMonth=todayStr().slice(0,7);if(!u.calSel)u.calSel=todayStr();
+const[y,m]=u.calMonth.split('-').map(Number);const first=new Date(Date.UTC(y,m-1,1)).getUTCDay();const days=new Date(Date.UTC(y,m,0)).getUTCDate();
+const by={};for(const c of S.customers)if(hasFU(c)){(by[c.fuDate]=by[c.fuDate]||[]).push(c);}
+let cells=['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="dow">${d}</div>`).join('');
+for(let i=0;i<first;i++)cells+='<button class="blank"></button>';
+const td=todayStr();
+for(let d=1;d<=days;d++){const ds=`${u.calMonth}-${String(d).padStart(2,'0')}`;const a=by[ds]||[];const over=a.some(c=>cat(c)==='overdue');
+cells+=`<button class="${ds===td?'td':''} ${ds===u.calSel?'sel':''}" data-act="calday" data-v="${ds}">${d}${a.length?`<i class="${over?'o':''}">${a.length}</i>`:''}</button>`;}
+const sel=(by[u.calSel]||[]).sort((a,b)=>dueTs(a)-dueTs(b));
+const label=new Date(Date.UTC(y,m-1,1)).toLocaleDateString('en-GB',{timeZone:'UTC',month:'long',year:'numeric'});
+return`<div class="row" style="margin-bottom:10px"><button class="btn sm" style="flex:0 0 52px" data-act="calprev">‹</button><b style="text-align:center">${label}</b><button class="btn sm" style="flex:0 0 52px" data-act="calnext">›</button></div><div class="cal">${cells}</div>
+<h2>${fmtDate(u.calSel)} <small>${sel.length} scheduled</small></h2>${listHTML(sel,'full','No follow-ups on this date.')}`;};
+
+function stats(){const L=lists(),td=todayStr();let calls=0;for(const c of S.customers)for(const h of c.history)if((h.type==='call'||h.type==='completed')&&todayStr(h.ts)===td)calls++;
+return{total:S.customers.length,fresh:L.fresh.length,calls,pending:L.today.length+L.overdue.length+L.upcoming.length,overdue:L.overdue.length,sales:L.sales.length,lost:L.lost.length};}
+VIEWS.reports=()=>{const s=stats();const box=(n,l)=>`<div><b>${n}</b><span>${l}</span></div>`;
+return`<div class="stat">${box(s.total,'Total customers')}${box(s.fresh,'New inquiries')}${box(s.calls,'Calls completed today')}${box(s.pending,'Follow-ups pending')}${box(s.overdue,'Overdue follow-ups')}${box(s.sales,'Sales completed')}${box(s.lost,'Lost customers')}</div>
+<h2>Export</h2><div class="acts two"><button class="btn primary" data-act="xlsx">⬇ Customers (Excel .xlsx)</button><button class="btn" data-act="csvh">⬇ Remarks history (CSV)</button></div><div class="note">CSV files open directly in Excel.</div>`;};
+
+VIEWS.settings=()=>{const s=S.settings;const zones=ZONES.includes(s.tz)?ZONES:[s.tz,...ZONES];
+const perm='Notification' in window?Notification.permission:'unsupported';
+return`${accountHTML()}<label>Time zone</label><select id="s-tz" data-act="tzchange">${zones.map(z=>`<option ${z===s.tz?'selected':''}>${z}</option>`).join('')}</select>
+<div class="note">Now: ${new Date().toLocaleString('en-GB',{timeZone:s.tz,dateStyle:'medium',timeStyle:'short'})}</div>
+<label>WhatsApp country code (added to local numbers)</label><input id="s-cc" type="tel" inputmode="numeric" value="${esc(s.cc)}" data-act="cc">
+<h2>Reminders</h2>
+<div class="tog"><span>Notifications on<br><small class="sub">Permission: ${perm}</small></span><input type="checkbox" id="s-notify" data-act="notify" ${s.notify&&perm==='granted'?'checked':''}></div>
+<label>Remind me before the follow-up</label><select id="s-before" data-act="before">${[0,5,10,30,60].map(m=>`<option value="${m}" ${s.remindBefore===m?'selected':''}>${m?m+' minutes before':'Only at the scheduled time'}</option>`).join('')}</select>
+<div class="tog"><span>Alert when a follow-up is missed</span><input type="checkbox" id="s-over" data-act="overalert" ${s.overdueAlert?'checked':''}></div>
+<button class="btn" style="width:100%;margin-top:8px" data-act="testnotify">Send a test notification</button>
+<div class="note"><b>Please read:</b> reminders are delivered only while Shahid App is open or recently running on your phone. Android can stop a web app in the background, so a reminder may arrive late or not at all. The Today and Missed lists are always correct when you open the app. Use the test button to see what works on your phone.</div>
+<h2>Custom tags</h2>${s.customTags.length?s.customTags.map((t,i)=>`<div class="row" style="margin-bottom:6px"><span class="tag" style="--tc:${t.color};flex:0 1 auto">${esc(t.name)}</span><button class="btn sm warn" style="flex:0 0 auto" data-act="deltag" data-v="${i}">Remove</button></div>`).join(''):'<div class="sub">None yet. Create tags with “＋ New tag” on any customer.</div>'}
+<button class="btn" style="width:100%;margin-top:8px" data-act="newtagset">＋ Create custom tag</button>
+<h2>Backup & restore</h2>
+<button class="btn good" style="width:100%;margin-bottom:8px" data-act="xlsx">📗 Download Excel file (all customers)</button>
+<div class="acts two"><button class="btn primary" data-act="backup">⬇ App backup</button><label class="btn" style="margin:0">⬆ Restore backup<input type="file" accept=".json,application/json" id="restore" class="hide"></label></div>
+<div class="note">${s.lastBackup?'Last backup: '+new Date(s.lastBackup).toLocaleString('en-GB',{timeZone:s.tz}):'No backup made yet.'} Save the backup file somewhere safe (Google Drive, WhatsApp to yourself, email).</div>
+<h2>Where is my data?</h2><div class="note">Your data is saved in your account (cloud) and on this phone. Login with the same user name and password on any phone to get all your data. Keep two backups: the Excel file for your records, and the App backup file to restore everything with one tap.<br><span id="persist"></span></div>
+<h2>Testing</h2><button class="btn" style="width:100%" data-act="sample">Add sample customer (Ahmed)</button><div class="sub" style="margin-top:12px;text-align:center">Shahid App · version 2.0</div>`;};
+
+/* ---------- cloud, login, subscription, admin ---------- */
+/* SETUP: paste your Firebase keys and admin details here (see setup steps) */
+const CFG={firebase:{apiKey:'AIzaSyBBpKaVst1DrJScD2TzSLXvvnQX7SC5Dn8',authDomain:'sfmanager-83ba9.firebaseapp.com',projectId:'sfmanager-83ba9',appId:'1:504392496291:web:39bbc47964005f7cb6bb16'},adminEmail:'shahidraza0265@gmail.com',adminWA:'96567773752'};
+const PLANS=[['1m','1 Month','0.950',1],['6m','6 Months','4.000',6],['1y','1 Year','5.000',12]];
+const TRIAL_DAYS=7;
+let auth=null,fs=null,U=null,P=null,unsub=[];
+const isAdmin=()=>!!(U&&U.email&&CFG.adminEmail&&U.email.toLowerCase()===CFG.adminEmail.toLowerCase());
+const endTs=()=>Math.max(P.trialEnd||0,P.paidUntil||0);
+const dt=t=>t?(t>4e12?'Unlimited':fmtDate(todayStr(t))):'–';
+const userDoc=()=>fs.collection('users').doc(U.uid);
+const cust=()=>userDoc().collection('customers');
+const clean=o=>JSON.parse(JSON.stringify(o));
+const cloudPut=c=>{if(fs&&U)cust().doc(c.id).set(clean(c)).catch(()=>{});};
+const cloudDel=id=>{if(fs&&U)cust().doc(id).delete().catch(()=>{});};
+const cloudSettings=()=>{if(fs&&U)userDoc().collection('meta').doc('settings').set(clean(S.settings)).catch(()=>{});};
+async function cloudReplace(){const snap=await cust().get();const ops=[];snap.forEach(d=>{if(!S.map.has(d.id))ops.push(b=>b.delete(d.ref));});S.customers.forEach(c=>ops.push(b=>b.set(cust().doc(c.id),clean(c))));for(let i=0;i<ops.length;i+=400){const b=fs.batch();ops.slice(i,i+400).forEach(o=>o(b));await b.commit();}}
+function stopCloud(){unsub.forEach(f=>f());unsub=[];}
+function startCloud(){stopCloud();
+unsub.push(cust().onSnapshot(async s=>{let ch=false;for(const d of s.docChanges()){if(d.doc.metadata.hasPendingWrites)continue;ch=true;const id=d.doc.id;
+if(d.type==='removed'){await rq(store('customers','readwrite').delete(id));S.customers=S.customers.filter(x=>x.id!==id);S.map.delete(id);}
+else{const c=d.doc.data();await rq(store('customers','readwrite').put(c));const i=S.customers.findIndex(x=>x.id===c.id);if(i>=0)S.customers[i]=c;else S.customers.push(c);S.map.set(c.id,c);}}
+if(ch&&!$('.sheet-bg')&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render(true);}));
+unsub.push(userDoc().collection('meta').doc('settings').onSnapshot(async d=>{if(!d.exists||d.metadata.hasPendingWrites)return;S.settings={...DEFAULTS,...d.data()};await metaSet('settings',S.settings);}));
+unsub.push(userDoc().onSnapshot(d=>{if(d.exists){P=d.data();if(gateCheck())render(true);}}));}
+
+/* gate screens (login / expired) */
+function gate(html){let g=$('#gate');if(!g){g=document.createElement('div');g.id='gate';document.body.appendChild(g);}g.innerHTML='<div class="in">'+html+'</div>';document.body.classList.add('lock');}
+function hideGate(){const g=$('#gate');if(g)g.remove();if(!$('.sheet-bg'))document.body.classList.remove('lock');}
+function subStatus(){if(isAdmin())return'Admin account (no limit)';const n=Date.now();if(P.paidUntil>n)return'Plan active till '+dt(P.paidUntil);if(P.trialEnd>n)return`Free trial: ${Math.ceil((P.trialEnd-n)/864e5)} day(s) left (till ${dt(P.trialEnd)})`;return'Your free trial / plan has ended';}
+function planCards(){return`<div class="card plan"><div><b>7 Days Free Trial</b><div class="sub">No charge · starts when you sign up</div></div></div>`+PLANS.map(p=>`<div class="card plan"><div><b>${p[1]}</b><div class="sub">${p[2]} KD</div></div><button class="btn primary sm" data-act="buy" data-v="${p[0]}">Buy</button></div>`).join('');}
+function gateCheck(){if(!P)return false;if(isAdmin()||Date.now()<endTs()){hideGate();return true;}
+gate(`<h1 style="margin:10px 0 4px">Subscription ended</h1><div class="warnbox">${subStatus()}. Your data is safe and will be back as soon as you renew.</div><h2>Choose a plan</h2>${planCards()}<div class="note">Tap Buy and send the WhatsApp message to the admin. Your plan starts after payment is confirmed.</div><button class="btn warn" style="width:100%" data-act="logout">Logout</button>`);return false;}
+function showAuth(mode,msg){mode=mode||'in';gate(`<h1 style="margin:10px 0 2px">Shahid App</h1><div class="sub">${mode==='in'?'Login to your account':'Create your account · 7 days free trial'}</div>
+${CFG.firebase.apiKey?'':'<div class="warnbox">Cloud setup missing: add your Firebase keys in CFG (see setup steps).</div>'}
+<div class="row" style="margin-top:14px"><button class="btn ${mode==='in'?'primary':''}" data-act="amode" data-v="in">Login</button><button class="btn ${mode==='up'?'primary':''}" data-act="amode" data-v="up">Sign up</button></div>
+${mode==='up'?'<label>Your name</label><input id="a-name" autocomplete="name">':''}
+<label>${mode==='up'?'Create user name: mobile number or email':'User name (mobile number or email)'}</label><input id="a-id" autocomplete="username" inputmode="email">
+<label>Password</label><input id="a-pw" type="password" autocomplete="${mode==='in'?'current-password':'new-password'}" placeholder="At least 6 characters">
+<div id="a-msg" class="warnbox ${msg?'':'hide'}">${esc(msg||'')}</div>
+<button class="btn primary big" data-act="doauth" data-v="${mode}">${mode==='in'?'Login':'Create account'}</button>
+${mode==='in'?'<button class="btn" style="width:100%;margin-top:10px" data-act="forgot">Forgot password (email users)</button>':''}`);}
+const toEmail=id=>{id=id.trim().toLowerCase();return id.includes('@')?id:digits(id)+'@shahidapp-user.com';};
+const AERR={'auth/email-already-in-use':'This user name already exists. Please login.','auth/wrong-password':'Wrong user name or password.','auth/invalid-credential':'Wrong user name or password.','auth/user-not-found':'Wrong user name or password.','auth/weak-password':'Password must be at least 6 characters.','auth/invalid-email':'Enter a valid mobile number or email.','auth/network-request-failed':'No internet. Try again.','auth/too-many-requests':'Too many tries. Wait a little and retry.'};
+const amsg=t=>{const m=$('#a-msg');if(m){m.textContent=t;m.classList.remove('hide');}};
+async function doAuth(mode){if(!auth)return amsg('Cloud is not set up yet.');const id=$('#a-id').value.trim(),pw=$('#a-pw').value;
+if(!id.includes('@')&&digits(id).length<6)return amsg('Enter a valid mobile number or email.');if(pw.length<6)return amsg('Password must be at least 6 characters.');
+const em=toEmail(id);
+try{if(mode==='up'){const name=$('#a-name').value.trim();if(!name)return amsg('Enter your name.');let done;window._suP=new Promise(r=>done=r);
+try{const cr=await auth.createUserWithEmailAndPassword(em,pw);await fs.collection('users').doc(cr.user.uid).set({name,loginId:id,trialEnd:Date.now()+TRIAL_DAYS*864e5,paidUntil:0,plan:'',created:Date.now()});}finally{done();window._suP=null;}}
+else await auth.signInWithEmailAndPassword(em,pw);}catch(e){amsg(AERR[e.code]||'Could not continue. '+(e.message||''));}}
+async function forgot(){const id=$('#a-id').value.trim();if(!id.includes('@'))return amsg('Password reset works for email users. Mobile users: contact the admin.');try{await auth.sendPasswordResetEmail(id);amsg('Reset link sent to your email.');}catch(e){amsg(AERR[e.code]||'Could not send reset email.');}}
+function buy(k){const p=PLANS.find(x=>x[0]===k);if(!CFG.adminWA){toast('Admin WhatsApp number is not set');return;}
+window.open('https://wa.me/'+CFG.adminWA+'?text='+encodeURIComponent(`Shahid App subscription request\nName: ${P.name}\nUser ID: ${P.loginId}\nPlan: ${p[1]} (${p[2]} KD)`),'_blank');}
+const accountHTML=()=>P?`<div class="card"><div class="name">${esc(P.name)}</div><div class="sub">User ID: ${esc(P.loginId)}</div><div class="when today">${subStatus()}</div><div class="acts two"><a class="btn sm" href="#/subscription">💳 Subscription</a><button class="btn sm warn" data-act="logout">Logout</button></div></div>`:'';
+VIEWS.subscription=()=>`<div class="card"><div class="name">${esc(P.name)}</div><div class="sub">${esc(P.loginId)}</div><div class="when today">${subStatus()}</div></div><h2>Plans</h2>${planCards()}<div class="note">Tap Buy and send the WhatsApp message to the admin. Your plan is added after payment is confirmed. A new plan is added on top of your remaining days.</div>`;
+VIEWS.admin=()=>isAdmin()?'<div id="adm"><div class="empty">Loading users…</div></div>':'<div class="empty">Not allowed.</div>';
+async function loadAdmin(){const box=$('#adm');if(!box)return;try{const s=await fs.collection('users').get();const us=[];s.forEach(d=>us.push({id:d.id,...d.data()}));us.sort((a,b)=>(b.created||0)-(a.created||0));
+box.innerHTML=`<input id="adm-q" placeholder="Search name or user ID"><div class="sub" style="margin:6px 2px">${us.length} users</div>`+us.map(u=>`<div class="card adm" data-s="${esc((u.name+' '+u.loginId).toLowerCase())}"><div class="name">${esc(u.name)}</div><div class="sub">${esc(u.loginId)}</div><div class="sub">Trial till: ${dt(u.trialEnd)} · Plan till: ${dt(u.paidUntil)}</div>
+<div class="row" style="margin-top:8px"><input type="number" id="d-${u.id}" placeholder="Days" inputmode="numeric"><button class="btn sm" data-act="admext" data-uid="${u.id}">Extend trial</button></div>
+<div class="row" style="margin-top:6px"><select id="p-${u.id}">${PLANS.map(p=>`<option value="${p[3]}">${p[1]} (${p[2]} KD)</option>`).join('')}</select><button class="btn sm good" data-act="admplan" data-uid="${u.id}">Activate plan</button></div>
+<button class="btn sm" style="width:100%;margin-top:6px" data-act="admunl" data-uid="${u.id}">Unlimited trial</button></div>`).join('');}
+catch(e){box.innerHTML='<div class="warnbox">Could not load users. Check the Firestore rules and the admin email.</div>';}}
+async function admSet(uid,fn){const r=fs.collection('users').doc(uid);const d=await r.get();await r.update(fn(d.data()));toast('Updated');loadAdmin();}
+
+/* legacy data: bring the old phone-only data into the account (first login only) */
+async function legacyImport(){if(localStorage.getItem('sa_legacy'))return;
+const old=await new Promise(res=>{try{const r=indexedDB.open('shahid-app');r.onupgradeneeded=()=>{r.transaction.abort();};r.onerror=()=>res(null);
+r.onsuccess=()=>{const d=r.result;try{const t=d.transaction(['customers','meta']);const a=t.objectStore('customers').getAll(),m=t.objectStore('meta').get('settings');t.oncomplete=()=>{d.close();res({c:a.result,s:m.result&&m.result.v});};t.onerror=()=>{d.close();res(null);};}catch(e){d.close();res(null);}};}catch(e){res(null);}});
+localStorage.setItem('sa_legacy','1');
+if(!old||!old.c.length)return;
+if(!confirm(`Old data found on this phone: ${old.c.length} customers.\n\nAdd it to this account?`))return;
+for(const c of old.c)await saveCustomer(c);
+if(old.s){S.settings={...S.settings,...old.s,counter:Math.max(old.s.counter||0,S.settings.counter||0)};await saveSettings();}
+toast('Old data added to your account');render(true);}
+
+/* Excel (.xlsx) export */
+const loadXLSX=()=>window.XLSX?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s);});
+async function exportXLSX(){try{await loadXLSX();}catch(e){toast('Internet needed for Excel. CSV downloaded instead.');exportCSV();return;}
+const A=[['Customer ID','Name','Mobile','WhatsApp','Location','Product','Inquiry Date','Quoted Price','Priority','Status','Tags','Latest Remark','Next Follow-Up Date','Next Follow-Up Time','Follow-Up Note','Interactions']];
+for(const c of S.customers)A.push([c.id,c.name,c.mobile,c.whatsapp,c.location,c.product,c.inquiryDate,c.price,c.priority,c.status,c.tags.join(' | '),c.remark,hasFU(c)?c.fuDate:'',hasFU(c)?c.fuTime:'',c.fuNote,c.history.length]);
+const B=[['Customer ID','Name','Type','Date/Time','Response','Remark','Objection','Tags','Next Date','Next Time']];
+for(const c of S.customers)for(const h of [...c.history].sort((a,b)=>a.ts-b.ts))B.push([c.id,c.name,h.type,h.callAt?h.callAt.replace('T',' '):new Date(h.ts).toLocaleString('en-GB',{timeZone:TZ()}),h.response,h.remark,h.objection,(h.tags||[]).join(' | '),h.nextDate,h.nextTime]);
+const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),'Customers');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(B),'Remarks history');XLSX.writeFile(wb,`shahid-customers-${todayStr()}.xlsx`);toast('Excel file ready');}
+
+/* ---------- router ---------- */
+const NAV=[['home','🏠','Home'],['today','📅','Today'],['overdue','⚠️','Overdue'],['customers','👥','Customers']];
+const TITLES={home:'Shahid App',today:"Today's Follow-Ups",overdue:'Overdue',customers:'All Customers',add:'Add Customer',edit:'Edit Customer',c:'Customer',calendar:'Calendar',reports:'Reports',settings:'Settings',subscription:'Subscription',admin:'Admin Panel'};
+function route(){const h=(location.hash||'#/home').slice(2).split('/');const name=VIEWS[h[0]]?h[0]:'home';return{name,arg:h[1]};}
+function render(keepScroll){if(!db)return;if(!gateCheck())return;const{name,arg}=route();const y=window.scrollY;$('#title').textContent=TITLES[name];
+$('#app').innerHTML=VIEWS[name](arg);if(name==='admin'&&isAdmin())loadAdmin();$('#fab').classList.toggle('hide',['add','edit'].includes(name));
+const L=lists();$('#bar').innerHTML=NAV.map(n=>`<a href="#/${n[0]}" class="${name===n[0]?'on':''}"><span class="ic">${n[1]}</span>${n[2]}${n[0]==='overdue'&&L.overdue.length?`<span class="badge">${L.overdue.length}</span>`:''}</a>`).join('')+`<button id="more"><span class="ic">☰</span>Menu</button>`;
+if(keepScroll)window.scrollTo(0,y);else window.scrollTo(0,0);
+try{navigator.setAppBadge&&(L.overdue.length+L.today.length?navigator.setAppBadge(L.overdue.length+L.today.length):navigator.clearAppBadge());}catch(e){}
+if(name==='settings'&&navigator.storage&&navigator.storage.persisted)navigator.storage.persisted().then(p=>{const e=$('#persist');if(e)e.textContent=p?'Storage protection: on.':'Storage protection: not granted by the browser.';});}
+window.addEventListener('hashchange',()=>{closeSheet();render();});
+function openMenu(){openSheet(`<h2>Menu</h2><div class="menu">${[['home','🏠','Home'],['add','➕','Add Customer'],['customers','👥','All Customers'],['today','📅',"Today's Follow-Ups"],['overdue','⚠️','Overdue'],['calendar','🗓','Calendar'],['reports','📊','Reports'],['subscription','💳','Subscription'],...(isAdmin()?[['admin','🛠','Admin Panel']]:[]),['settings','⚙️','Settings']].map(m=>`<a href="#/${m[0]}">${m[1]} ${m[2]}</a>`).join('')}</div>`);}
+
+/* ---------- actions ---------- */
+function openLog(id,mode){const c=S.map.get(id);const done=mode==='complete';
+openSheet(`<h2>${done?'Complete follow-up':'Add remark'} · ${esc(c.name)}</h2>
+<label style="margin-top:0">${done?'Conversation outcome *':'What was discussed *'}</label><textarea id="l-remark" rows="3"></textarea>
+<label>Customer response</label><div class="seg wrap" id="l-resp">${['Answered','No answer','Busy','Call back later','Not interested'].map(r=>`<button type="button" data-v="${r}">${r}</button>`).join('')}</div>
+<label>Customer objection</label><input id="l-obj" placeholder="Optional"><div class="qrow">${['Price too high','Family decision','Comparing others','Not now','Needs demo'].map(o=>`<button type="button" class="qchip" data-fill="l-obj" data-text="${o}">${o}</button>`).join('')}</div>
+<label>Call date and time</label><input type="datetime-local" id="l-at" value="${nowLocal()}">
+<label>Tags</label>${tagPicker(c.tags,'l-tags')}
+${done?`<label>Another follow-up needed?</label><div class="seg" id="l-need"><button type="button" data-v="yes" class="on">Yes</button><button type="button" data-v="no">No</button></div>`:`<label>Next follow-up <small style="font-weight:400;color:var(--mute)">(leave empty to keep the current schedule)</small></label>`}
+<div id="l-fu">${fuFields('l',done?addDays(todayStr(),1):'',done?'10:00':'')}</div>
+<button class="btn primary big" data-act="savelog" data-id="${id}" data-mode="${mode}">${done?'Save outcome':'Save remark'}</button>`);}
+
+async function saveLog(id,mode){const c=S.map.get(id);const remark=$('#l-remark').value.trim();if(!remark){toast('Enter what was discussed');$('#l-remark').focus();return;}
+const done=mode==='complete';const need=!done||$('#l-need .on').dataset.v==='yes';const fu=need?readFU('l'):{d:'',t:''};
+if(done&&need&&!fu.d){toast('Choose the next follow-up date');return;}
+const at=$('#l-at').value||nowLocal();const[ad,at2]=at.split('T');
+const tags=pickedTags('l-tags');const resp=$('#l-resp .on');
+c.history.push({id:uid(),type:done?'completed':'call',ts:toTs(ad,at2),callAt:at,response:resp?resp.dataset.v:'',remark,objection:$('#l-obj').value.trim(),tags,nextDate:fu.d,nextTime:fu.t});
+c.remark=remark;c.tags=tags;if(c.status==='New Inquiry')c.status='Contacted';
+if(fu.d){c.fuDate=fu.d;c.fuTime=fu.t;}else if(done){c.fuDate='';c.fuTime='';c.fuNote='';}
+await saveCustomer(c);closeSheet();toast(fu.d?'Saved. Next follow-up '+fmtDate(fu.d):'Saved');render(true);}
+
+function openResched(id){const c=S.map.get(id);openSheet(`<h2>${c.fuDate?'Reschedule':'Schedule'} · ${esc(c.name)}</h2>${fuFields('r',c.fuDate&&cat(c)!=='overdue'?c.fuDate:addDays(todayStr(),1),c.fuTime||'10:00')}<label>Reason or note (optional)</label><input id="r-note" value="${esc(c.fuNote)}"><button class="btn primary big" data-act="saveresched" data-id="${id}">Save new time</button>`);}
+async function saveResched(id){const c=S.map.get(id);const fu=readFU('r');if(!fu.d){toast('Choose a date');return;}
+const old=c.fuDate?`${fmtDate(c.fuDate)}, ${fmtTime(c.fuTime)}`:'none';const note=$('#r-note').value.trim();
+c.history.push({id:uid(),type:'reschedule',ts:Date.now(),remark:`Follow-up moved from ${old} to ${fmtDate(fu.d)}, ${fmtTime(fu.t)}${note?'. '+note:''}`,tags:[],nextDate:fu.d,nextTime:fu.t});
+c.fuDate=fu.d;c.fuTime=fu.t;c.fuNote=note;if(!isOpen(c))c.status='Contacted';await saveCustomer(c);closeSheet();toast('Rescheduled');render(true);}
+
+async function markSale(id){const c=S.map.get(id);if(!confirm(`Mark ${c.name} as a completed sale?`))return;
+c.status='Sale Done';if(!c.tags.includes(T_SALE))c.tags.push(T_SALE);c.fuDate='';c.fuTime='';c.fuNote='';
+c.history.push({id:uid(),type:'sale',ts:Date.now(),remark:'Sale completed',tags:[]});await saveCustomer(c);toast('Sale recorded 🏆');render(true);}
+
+async function submitForm(){const f=$('#cform'),id=f.dataset.id;const name=$('#f-name').value.trim(),mobile=$('#f-mobile').value.trim();
+if(!name){toast('Enter the customer name');$('#f-name').focus();return;}
+if(digits(mobile).length<6){toast('Enter a valid mobile number');$('#f-mobile').focus();return;}
+const dup=S.customers.find(c=>c.id!==id&&norm(c.mobile)===norm(mobile));
+if(dup&&!confirm(`Duplicate number: ${dup.name} (${dup.id}) already has ${dup.mobile}.\n\nSave anyway?`))return;
+const fu=readFU('f');const pri=$('#f-pri .on');let tags=pickedTags('f-tags');const status=$('#f-status').value;
+if(status==='Sale Done'&&!tags.includes(T_SALE))tags.push(T_SALE);if(status==='Lost'&&!tags.includes(T_LOST))tags.push(T_LOST);
+const base={name,mobile,whatsapp:$('#f-wa').value.trim(),location:$('#f-loc').value.trim(),product:$('#f-prod').value.trim(),inquiryDate:$('#f-inq').value,price:$('#f-price').value,priority:pri?pri.dataset.v:'Warm',tags,remark:$('#f-remark').value.trim(),status,fuDate:fu.d,fuTime:fu.t,fuNote:$('#f-note').value.trim()};
+let c;
+if(id){c=S.map.get(id);const changed=(c.fuDate!==fu.d||c.fuTime!==fu.t)&&fu.d;Object.assign(c,base);
+c.history.push(changed?{id:uid(),type:'reschedule',ts:Date.now(),remark:'Follow-up set from the edit screen',tags:[],nextDate:fu.d,nextTime:fu.t}:{id:uid(),type:'edit',ts:Date.now(),remark:'Customer details updated',tags:[]});}
+else{S.settings.counter++;await saveSettings();c={id:'SA-'+String(S.settings.counter).padStart(4,'0'),createdAt:Date.now(),history:[],...base};
+c.history.push({id:uid(),type:'created',ts:Date.now(),remark:base.remark||'Customer added',tags:[...tags],nextDate:fu.d,nextTime:fu.t});}
+await saveCustomer(c);toast(id?'Customer updated':'Customer saved · '+c.id);location.hash=id?'#/c/'+c.id:(fu.d?'#/c/'+c.id:'#/customers');}
+
+/* ---------- export / backup ---------- */
+const csvCell=v=>{v=String(v??'');return/[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+function download(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);}
+function exportCSV(){const rows=[['Customer ID','Name','Mobile','WhatsApp','Location','Product','Inquiry Date','Quoted Price','Priority','Status','Tags','Latest Remark','Next Follow-Up Date','Next Follow-Up Time','Follow-Up Note','Interactions']];
+for(const c of S.customers)rows.push([c.id,c.name,c.mobile,c.whatsapp,c.location,c.product,c.inquiryDate,c.price,c.priority,c.status,c.tags.join(' | '),c.remark,hasFU(c)?c.fuDate:'',hasFU(c)?c.fuTime:'',c.fuNote,c.history.length]);
+download(`shahid-customers-${todayStr()}.csv`,'\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv');}
+function exportHist(){const rows=[['Customer ID','Name','Type','Date/Time','Response','Remark','Objection','Tags','Next Date','Next Time']];
+for(const c of S.customers)for(const h of [...c.history].sort((a,b)=>a.ts-b.ts))rows.push([c.id,c.name,h.type,h.callAt?h.callAt.replace('T',' '):new Date(h.ts).toLocaleString('en-GB',{timeZone:TZ()}),h.response,h.remark,h.objection,(h.tags||[]).join(' | '),h.nextDate,h.nextTime]);
+download(`shahid-history-${todayStr()}.csv`,'\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv');}
+async function backup(){S.settings.lastBackup=Date.now();await saveSettings();download(`shahid-backup-${todayStr()}.json`,JSON.stringify({app:'shahid-app',version:1,exported:new Date().toISOString(),settings:S.settings,customers:S.customers}),'application/json');toast('Backup file created');render(true);}
+async function restore(file){try{const d=JSON.parse(await file.text());if(d.app!=='shahid-app'||!Array.isArray(d.customers))throw 0;
+if(!confirm(`Restore ${d.customers.length} customers from this backup?\nThis REPLACES all data currently on this phone.`))return;
+await rq(store('customers','readwrite').clear());for(const c of d.customers)await rq(store('customers','readwrite').put(c));
+S.settings={...DEFAULTS,...d.settings};await saveSettings();await loadAll();cloudReplace().catch(()=>{});toast('Backup restored');render();}catch(e){toast('That is not a valid Shahid App backup');}}
+
+/* ---------- notifications ---------- */
+async function notify(title,body,tag){if(!('Notification' in window)||Notification.permission!=='granted')return false;
+try{const reg=navigator.serviceWorker&&await navigator.serviceWorker.getRegistration();if(reg){await reg.showNotification(title,{body,tag,icon:'icon-192.png',badge:'icon-192.png'});return true;}new Notification(title,{body,tag,icon:'icon-192.png'});return true;}catch(e){return false;}}
+async function checkReminders(){const s=S.settings;if(!s.notify||!('Notification' in window)||Notification.permission!=='granted')return;const now=Date.now();let dirty=false;
+for(const c of S.customers){if(!hasFU(c))continue;const due=dueTs(c),base=`${c.id}|${c.fuDate}|${c.fuTime}`;const t=fmtTime(c.fuTime);
+const fire=async(k,title,body)=>{if(S.fired[k])return;S.fired[k]=now;dirty=true;await notify(title,body,k);};
+if(s.remindBefore>0&&now>=due-s.remindBefore*6e4&&now<due)await fire(base+'|pre',`Call ${c.name} in ${s.remindBefore} min`,`${t} · ${c.remark||c.product||''}`.slice(0,120));
+if(now>=due&&now<due+36e5)await fire(base+'|due',`Call ${c.name} now`,`${t} · ${c.remark||c.product||''}`.slice(0,120));
+if(s.overdueAlert&&now>=due+18e5&&now<due+432e5)await fire(base+'|over',`Missed: ${c.name}`,`Scheduled ${t}. Call or reschedule.`);}
+if(dirty){const k=Object.keys(S.fired);if(k.length>500)k.sort((a,b)=>S.fired[a]-S.fired[b]).slice(0,k.length-300).forEach(x=>delete S.fired[x]);await metaSet('fired',S.fired);}}
+
+/* ---------- events ---------- */
+document.addEventListener('click',async e=>{
+const T=e.target;
+const sp=T.closest('[data-special]');if(sp){S.ui.special=sp.dataset.special;S.ui.filterPri='';S.ui.filterTags=[];S.ui.q='';}
+if(T.closest('#more')||T.closest('#menuBtn')){openMenu();return;}
+if(T.closest('#fab')){location.hash='#/add';return;}
+const qd=T.closest('[data-qd]');if(qd){const inp=$('input[type=date]',qd.closest('.fu'));const t=todayStr(),k=qd.dataset.qd;inp.value=k==='today'?t:k==='tomorrow'?addDays(t,1):k==='3'?addDays(t,3):k==='week'?addDays(t,7):monthEnd(t);const ti=$('input[type=time]',qd.closest('.fu'));if(!ti.value)ti.value='10:00';return;}
+const qt=T.closest('[data-qt]');if(qt){$('input[type=time]',qt.closest('.fu')).value=qt.dataset.qt;return;}
+const fl=T.closest('[data-fill]');if(fl){$('#'+fl.dataset.fill).value=fl.dataset.text;return;}
+const tg=T.closest('.tagchip[data-tag]');if(tg){tg.classList.toggle('on');return;}
+const sg=T.closest('.seg button');if(sg){const seg=sg.parentElement;if(seg.id==='l-resp'&&sg.classList.contains('on')){sg.classList.remove('on');return;}$$('button',seg).forEach(b=>b.classList.remove('on'));sg.classList.add('on');if(seg.id==='l-need')$('#l-fu').classList.toggle('hide',sg.dataset.v==='no');return;}
+const a=T.closest('[data-act]');if(!a)return;const act=a.dataset.act,id=a.dataset.id,c=id?S.map.get(id):null;
+switch(act){
+case'call':location.href=telLink(c);break;
+case'wa':{const l=waLink(c);if(l)window.open(l,'_blank');else toast('No valid WhatsApp number');break;}
+case'remark':openLog(id,'remark');break;
+case'complete':openLog(id,'complete');break;
+case'resched':openResched(id);break;
+case'sale':markSale(id);break;
+case'savelog':saveLog(id,a.dataset.mode);break;
+case'saveresched':saveResched(id);break;
+case'savecust':submitForm();break;
+case'samewa':$('#f-wa').value=$('#f-mobile').value;break;
+case'newtag':{const n=addCustomTag(prompt('New tag name (you can add an emoji):')||'');if(n){const box=$('#'+a.dataset.target);if(![...$$('[data-tag]',box)].some(b=>b.dataset.tag===n)){const b=document.createElement('button');b.type='button';b.className='tagchip on';b.style.setProperty('--tc',tagColor(n));b.dataset.tag=n;b.textContent=n;box.insertBefore(b,a);}else $$('[data-tag]',box).find(b=>b.dataset.tag===n).classList.add('on');}break;}
+case'newtagset':{const n=addCustomTag(prompt('New tag name (you can add an emoji):')||'');if(n){toast('Tag created');render(true);}break;}
+case'deltag':{const t=S.settings.customTags[+a.dataset.v];if(confirm(`Remove tag “${t.name}”? Customers keep it in their records.`)){S.settings.customTags.splice(+a.dataset.v,1);await saveSettings();render(true);}break;}
+case'fpri':S.ui.filterPri=a.dataset.v;S.ui.special='';render(true);break;
+case'ftag':{const v=a.dataset.v,i=S.ui.filterTags.indexOf(v);if(i>=0)S.ui.filterTags.splice(i,1);else S.ui.filterTags.push(v);S.ui.special='';render(true);break;}
+case'clearspecial':S.ui.special='';render(true);break;
+case'calday':S.ui.calSel=a.dataset.v;render(true);break;
+case'calprev':case'calnext':{let[y,m]=S.ui.calMonth.split('-').map(Number);m+=act==='calnext'?1:-1;if(m<1){m=12;y--;}if(m>12){m=1;y++;}S.ui.calMonth=`${y}-${String(m).padStart(2,'0')}`;S.ui.calSel=`${S.ui.calMonth}-01`;render(true);break;}
+case'amode':showAuth(a.dataset.v);break;
+case'doauth':doAuth(a.dataset.v);break;
+case'forgot':forgot();break;
+case'logout':if(confirm('Logout from this phone?'))auth.signOut();break;
+case'buy':buy(a.dataset.v);break;
+case'xlsx':exportXLSX();break;
+case'admext':{const n=+$('#d-'+a.dataset.uid).value;if(!n){toast('Enter number of days');break;}admSet(a.dataset.uid,u=>({trialEnd:Math.max(Date.now(),u.trialEnd||0)+n*864e5}));break;}
+case'admplan':{const m=+$('#p-'+a.dataset.uid).value;admSet(a.dataset.uid,u=>{const d=new Date(Math.max(Date.now(),u.paidUntil||0));d.setMonth(d.getMonth()+m);return{paidUntil:d.getTime()};});break;}
+case'admunl':admSet(a.dataset.uid,u=>({trialEnd:new Date('2100-01-01').getTime()}));break;
+case'csv':exportCSV();break;case'csvh':exportHist();break;case'backup':backup();break;
+case'delete':if(confirm(`Delete ${c.name} and all their remarks?\nThis cannot be undone. A backup is recommended first.`)){await rq(store('customers','readwrite').delete(id));cloudDel(id);S.customers=S.customers.filter(x=>x.id!==id);S.map.delete(id);toast('Customer deleted');location.hash='#/customers';}break;
+case'testnotify':{if(!('Notification' in window)){toast('This browser does not support notifications');break;}if(Notification.permission!=='granted'){const p=await Notification.requestPermission();if(p!=='granted'){toast('Notification permission was not granted');render(true);break;}}const ok=await notify('Shahid App','Test notification. If you can see this, reminders can reach you.','test');toast(ok?'Test sent. Check your notification shade':'Could not show a notification');render(true);break;}
+case'sample':{S.settings.counter++;await saveSettings();const s={id:'SA-'+String(S.settings.counter).padStart(4,'0'),createdAt:Date.now(),name:'Ahmed',mobile:'12345678',whatsapp:'',location:'Kuwait City',product:'Water Purifier',inquiryDate:todayStr(),price:'',priority:'Hot',tags:[T_HOT,'🟠 Interested','👨‍👩‍👦 Family Discussion'],remark:'Interested but wants to discuss the price with his family.',status:'Contacted',fuDate:'2026-10-12',fuTime:'11:00',fuNote:'Ask about family decision',history:[]};s.history.push({id:uid(),type:'created',ts:Date.now(),remark:s.remark,tags:[...s.tags],nextDate:s.fuDate,nextTime:s.fuTime});await saveCustomer(s);toast('Sample customer added');break;}
+}});
+document.addEventListener('input',e=>{
+if(e.target.id==='adm-q'){const q=e.target.value.toLowerCase();$$('.adm').forEach(x=>x.classList.toggle('hide',!x.dataset.s.includes(q)));}
+if(e.target.id==='q'){S.ui.q=e.target.value;S.ui.special='';const r=VIEWS.customers();const tmp=document.createElement('div');tmp.innerHTML=r;$('#results').innerHTML=$('#results',tmp).innerHTML;}
+if(e.target.id==='f-mobile'){const v=e.target.value,id=$('#cform').dataset.id;const d=norm(v).length>=6&&S.customers.find(c=>c.id!==id&&norm(c.mobile)===norm(v));$('#dupnote').innerHTML=d?`<div class="warnbox">⚠ This number already belongs to <b>${esc(d.name)}</b> (${esc(d.id)}).</div>`:'';}});
+document.addEventListener('change',async e=>{const t=e.target,s=S.settings;
+if(t.id==='s-tz'){s.tz=t.value;await saveSettings();toast('Time zone: '+t.value);render(true);}
+if(t.id==='s-cc'){s.cc=digits(t.value)||'965';await saveSettings();}
+if(t.id==='s-before'){s.remindBefore=+t.value;await saveSettings();}
+if(t.id==='s-over'){s.overdueAlert=t.checked;await saveSettings();}
+if(t.id==='s-notify'){if(t.checked){if(!('Notification' in window)){toast('Notifications are not supported here');t.checked=false;return;}const p=Notification.permission==='granted'?'granted':await Notification.requestPermission();s.notify=p==='granted';if(p!=='granted'){t.checked=false;toast('Permission was not granted. Allow notifications in Android settings');}}else s.notify=false;await saveSettings();render(true);}
+if(t.id==='restore'&&t.files[0]){await restore(t.files[0]);t.value='';}});
+
+/* ---------- init ---------- */
+async function loadAll(){S.customers=await rq(store('customers').getAll());S.map=new Map(S.customers.map(c=>[c.id,c]));S.fired=(await metaGet('fired'))||{};}
+async function startApp(){
+try{db=await openDB('shahid-app-'+U.uid);}catch(e){$('#app').innerHTML='<div class="empty">This browser blocked local storage, so Shahid App cannot save data. Open it in Chrome and turn off private mode.</div>';return;}
+S.settings={...DEFAULTS,...((await metaGet('settings'))||{})};await loadAll();
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();checkReminders();startCloud();if(window._tm)return;window._tm=1;
+setInterval(()=>{checkReminders();if(!$('.sheet-bg')&&['home','today','overdue','calendar'].includes(route().name)&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render(true);},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){checkReminders();if(!$('.sheet-bg')&&['home','today','overdue','calendar'].includes(route().name))render(true);}});}
+function boot(){
+if(typeof firebase==='undefined'||!CFG.firebase.apiKey){showAuth('in',typeof firebase==='undefined'?'Internet is needed for the first login.':'');return;}
+firebase.initializeApp(CFG.firebase);auth=firebase.auth();fs=firebase.firestore();fs.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+auth.onAuthStateChanged(async u=>{
+if(!u){stopCloud();U=null;P=null;db=null;S.customers=[];S.map=new Map();showAuth('in');return;}
+U=u;if(window._suP)await window._suP;
+try{const d=await fs.collection('users').doc(u.uid).get();P=d.exists?d.data():null;}catch(e){P=null;}
+if(!P){showAuth('in','Could not load your profile. Check internet and login again.');auth.signOut();return;}
+await startApp();await legacyImport();});}
+boot();
+</script>
+</body>
+</html>
