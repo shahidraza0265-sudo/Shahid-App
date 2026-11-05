@@ -329,6 +329,7 @@ return`${accountHTML()}<label>Time zone</label><select id="s-tz" data-act="tzcha
 <h2>Custom tags</h2>${s.customTags.length?s.customTags.map((t,i)=>`<div class="row" style="margin-bottom:6px"><span class="tag" style="--tc:${t.color};flex:0 1 auto">${esc(t.name)}</span><button class="btn sm warn" style="flex:0 0 auto" data-act="deltag" data-v="${i}">Remove</button></div>`).join(''):'<div class="sub">None yet. Create tags with “＋ New tag” on any customer.</div>'}
 <button class="btn" style="width:100%;margin-top:8px" data-act="newtagset">＋ Create custom tag</button>
 <h2>Backup & restore</h2>
+<button class="btn" style="width:100%;margin-bottom:8px" data-act="oldimport">🔎 Find old data on this phone</button>
 <button class="btn good" style="width:100%;margin-bottom:8px" data-act="xlsx">📗 Download Excel file (all customers)</button>
 <div class="acts two"><button class="btn primary" data-act="backup">⬇ App backup</button><label class="btn" style="margin:0">⬆ Restore backup<input type="file" accept=".json,application/json" id="restore" class="hide"></label></div>
 <div class="note">${s.lastBackup?'Last backup: '+new Date(s.lastBackup).toLocaleString('en-GB',{timeZone:s.tz}):'No backup made yet.'} Save the backup file somewhere safe (Google Drive, WhatsApp to yourself, email).</div>
@@ -400,11 +401,11 @@ catch(e){box.innerHTML='<div class="warnbox">Could not load users. Check the Fir
 async function admSet(uid,fn){const r=fs.collection('users').doc(uid);const d=await r.get();await r.update(fn(d.data()));toast('Updated');loadAdmin();}
 
 /* legacy data: bring the old phone-only data into the account (first login only) */
-async function legacyImport(){if(localStorage.getItem('sa_legacy'))return;
+async function legacyImport(force){if(!force&&localStorage.getItem('sa_legacy'))return;
 const old=await new Promise(res=>{try{const r=indexedDB.open('shahid-app');r.onupgradeneeded=()=>{r.transaction.abort();};r.onerror=()=>res(null);
 r.onsuccess=()=>{const d=r.result;try{const t=d.transaction(['customers','meta']);const a=t.objectStore('customers').getAll(),m=t.objectStore('meta').get('settings');t.oncomplete=()=>{d.close();res({c:a.result,s:m.result&&m.result.v});};t.onerror=()=>{d.close();res(null);};}catch(e){d.close();res(null);}};}catch(e){res(null);}});
 localStorage.setItem('sa_legacy','1');
-if(!old||!old.c.length)return;
+if(!old||!old.c.length){if(force){let n='';try{n=(await indexedDB.databases()).map(d=>d.name).join(', ');}catch(e){}alert('No old data found at this address.'+(n?'\nDatabases saved here: '+n:''));}return;}
 if(!confirm(`Old data found on this phone: ${old.c.length} customers.\n\nAdd it to this account?`))return;
 for(const c of old.c)await saveCustomer(c);
 if(old.s){S.settings={...S.settings,...old.s,counter:Math.max(old.s.counter||0,S.settings.counter||0)};await saveSettings();}
@@ -542,6 +543,7 @@ case'forgot':forgot();break;
 case'logout':if(confirm('Logout from this phone?'))auth.signOut();break;
 case'buy':buy(a.dataset.v);break;
 case'xlsx':exportXLSX();break;
+case'oldimport':legacyImport(true);break;
 case'admext':{const n=+$('#d-'+a.dataset.uid).value;if(!n){toast('Enter number of days');break;}admSet(a.dataset.uid,u=>({trialEnd:Math.max(Date.now(),u.trialEnd||0)+n*864e5}));break;}
 case'admplan':{const m=+$('#p-'+a.dataset.uid).value;admSet(a.dataset.uid,u=>{const d=new Date(Math.max(Date.now(),u.paidUntil||0));d.setMonth(d.getMonth()+m);return{paidUntil:d.getTime()};});break;}
 case'admunl':admSet(a.dataset.uid,u=>({trialEnd:new Date('2100-01-01').getTime()}));break;
